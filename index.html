@@ -44,17 +44,6 @@
   button:hover {
     background: orange;
   }
-  .output {
-    margin-top: 15px;
-    padding: 10px;
-    background: #1e1e1e;
-    border-radius: 6px;
-    word-break: break-word;
-  }
-  .output a {
-    color: #4ea3ff;
-    text-decoration: none;
-  }
   /* Admin list hidden for everyone */
   #adminList {
     display: none;
@@ -89,8 +78,6 @@
   <div class="g-recaptcha" data-sitekey="6LcAy58rAAAAABuoRRTaNeOHkbdo9NJUDiuqbq22"></div>
 
   <button id="uploadBtn">Upload</button>
-
-  <div class="output" id="output"></div>
 </div>
 
 <!-- Admin-only list hidden -->
@@ -100,37 +87,6 @@
 </div>
 
 <script>
-  let entries = [];
-
-  function escapeHtml(text) {
-    if (!text) return "";
-    return text.replace(/[&<>"']/g, function(m) {
-      return ({
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': '&quot;',
-        "'": '&#39;'
-      })[m];
-    });
-  }
-
-  function createTelegramLink(username) {
-    if (!username) return "";
-    let cleanUsername = username.replace(/^@/, '');
-    return `<a href="https://t.me/${cleanUsername}" target="_blank">@${cleanUsername}</a>`;
-  }
-
-  function generateFormattedText(data) {
-    return `1. Team name: ${escapeHtml(data.teamName)}
-2. TG username: ${createTelegramLink(data.tgUsername)}
-3. TG name: ${escapeHtml(data.tgName)}
-4. Mobile: ${escapeHtml(data.mobile)}
-5. Payment: ${escapeHtml(data.paymentMethod)}
-6. Trxid: ${escapeHtml(data.trxid)}
-7. Group: ${escapeHtml(data.group)}`;
-  }
-
   document.getElementById("uploadBtn").addEventListener("click", () => {
     const captchaResponse = grecaptcha.getResponse();
     if (captchaResponse.length === 0) {
@@ -142,17 +98,7 @@
       return;
     }
 
-    const data = {
-      group: document.getElementById("group") ? document.getElementById("group").value.trim() : "",
-      tgName: document.getElementById("tgName").value.trim(),
-      tgUsername: document.getElementById("tgUsername").value.trim(),
-      mobile: document.getElementById("mobile").value.trim(),
-      paymentMethod: document.getElementById("paymentMethod").value.trim(),
-      trxid: document.getElementById("trxid").value.trim(),
-      teamName: document.getElementById("teamName").value.trim(),
-    };
-
-    // Output display removed as requested
+    // Your form data processing here (if any)
 
     // Reset reCAPTCHA after submission
     grecaptcha.reset();
