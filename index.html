@@ -41,7 +41,6 @@
     background: #1e1e1e;
     color: white;
   }
-  /* Team name input styling: bold and uppercase */
   #teamname {
     font-weight: bold;
     text-transform: uppercase;
@@ -93,7 +92,6 @@
     line-height: 1.4;
     color: #ccc;
   }
-  /* copy button style */
   .copy-btn {
     display: inline-block;
     background: #444;
@@ -110,7 +108,6 @@
   .copy-btn:hover {
     background: #666;
   }
-  /* Custom dropdown styles */
   .custom-select {
     position: relative;
     user-select: none;
@@ -152,23 +149,78 @@
   .select-items div:hover {
     background: #444;
   }
+  /* Custom Service Button and Popup */
+  .serviceBtn {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    width: 56px;
+    height: 56px;
+    background: #ffcc00;
+    border-radius: 50%;
+    box-shadow: 0 4px 12px rgba(255, 204, 0, 0.7);
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1100;
+    transition: background-color 0.3s ease;
+  }
+  .serviceBtn:hover {
+    background: #e6b800;
+  }
+  .serviceBtn svg {
+    width: 28px;
+    height: 28px;
+    fill: black;
+  }
+  .contactPopup {
+    position: fixed;
+    right: 20px;
+    bottom: 80px;
+    background: #222;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.8);
+    padding: 10px 0;
+    width: 180px;
+    z-index: 1200;
+    display: none;
+    flex-direction: column;
+  }
+  .contactPopup.active {
+    display: flex;
+  }
+  .contactPopup a {
+    color: white;
+    padding: 10px 20px;
+    text-decoration: none;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.3s;
+  }
+  .contactPopup a:hover {
+    background: #444;
+  }
+  .contactPopup a svg {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+    fill: #0088cc;
+    flex-shrink: 0;
+  }
 </style>
-
 <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
 <body>
-
 <div class="container">
-  <!-- Step 1 heading -->
-  <h1 id="groupTitle">Players Name</h1>
-  
+  <h1 id="groupTitle">Group B</h1>
   <div id="step1">
     <input type="text" id="teamname" placeholder="Enter team name" autocomplete="off" />
     <input type="text" id="tgUsername" placeholder="Enter telegram username" autocomplete="off" />
     <input type="text" id="mobile" placeholder="Enter mobile number" autocomplete="off" />
-
-    <!-- Custom dropdown -->
-    <label for="paymentMethod" style="display:none;">Select payment method</label>
     <div class="custom-select" id="customPaymentSelect" tabindex="0" aria-haspopup="listbox" aria-expanded="false" role="combobox">
       <div class="select-selected" aria-live="polite" aria-label="Payment method selection">Select payment method</div>
       <div class="select-items" role="listbox" tabindex="-1">
@@ -176,16 +228,11 @@
         <div role="option" data-value="Ng" tabindex="0">Nagod</div>
       </div>
     </div>
-
     <div id="paymentInfo" class="hidden" aria-live="polite"></div>
-
     <input type="text" id="trxid" placeholder="Enter Transaction Id" autocomplete="off" />
-    
     <button id="continueBtn" disabled>Continue</button>
   </div>
-  
   <div id="step2" class="hidden">
-    <!-- Players Name -->
     <div class="players">
       <input type="text" id="player1" placeholder="Player 1 Name" autocomplete="off" />
       <input type="text" id="player2" placeholder="Player 2 Name" autocomplete="off" />
@@ -193,33 +240,49 @@
       <input type="text" id="player4" placeholder="Player 4 Name" autocomplete="off" />
       <input type="text" id="player5" placeholder="Player 5 Name" autocomplete="off" />
     </div>
-
     <div class="g-recaptcha" data-sitekey="6LcAy58rAAAAABuoRRTaNeOHkbdo9NJUDiuqbq22"></div>
-    
     <button id="uploadBtn">Submit</button>
   </div>
 </div>
 
+<!-- Custom Service Button -->
+<button id="serviceBtn" aria-label="Contact service via Telegram" title="Contact service" class="serviceBtn" type="button">
+  <!-- Example generic service icon (chat bubbles) -->
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <path d="M20 2H4C2.9 2 2 2.9 2 4v14l4-4h14c1.1 0 2-0.9 2-2V4c0-1.1-0.9-2-2-2zM6 14H4v-2h2v2zm10-1c0 .55-.45 1-1 1H9v-2h6c.55 0 1 .45 1 1z"/>
+  </svg>
+</button>
+
+<!-- Popup with Telegram contacts -->
+<div id="contactPopup" class="contactPopup" role="menu" aria-hidden="true" aria-label="Telegram contacts">
+  <a href="https://t.me/NeoEchoo" target="_blank" rel="noopener" role="menuitem" tabindex="0">
+    <!-- Telegram icon -->
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" aria-hidden="true" focusable="false">
+      <path d="M120 0C53.73 0 0 53.73 0 120c0 66.27 53.73 120 120 120s120-53.73 120-120C240 53.73 186.27 0 120 0zm57.147 79.742-28.19 131.3c-2.16 9.554-15.538 12.098-21.064 3.916l-29.21-41.097-14.097 13.566c-1.553 1.553-2.848 2.848-5.813 2.848l2.08-29.34 53.323-48.227c2.32-2.08-0.5-3.236-3.614-1.157l-65.958 41.478-28.397-8.872c-9.28-2.73-9.454-9.28 1.934-13.67l112.22-43.228c5.15-1.732 9.68 1.157 8.27 13.67z"/>
+    </svg>
+    Helpline 1
+  </a>
+  <a href="https://t.me/shakildewan7" target="_blank" rel="noopener" role="menuitem" tabindex="0">
+    <!-- Telegram icon -->
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" aria-hidden="true" focusable="false">
+      <path d="M120 0C53.73 0 0 53.73 0 120c0 66.27 53.73 120 120 120s120-53.73 120-120C240 53.73 186.27 0 120 0zm57.147 79.742-28.19 131.3c-2.16 9.554-15.538 12.098-21.064 3.916l-29.21-41.097-14.097 13.566c-1.553 1.553-2.848 2.848-5.813 2.848l2.08-29.34 53.323-48.227c2.32-2.08-0.5-3.236-3.614-1.157l-65.958 41.478-28.397-8.872c-9.28-2.73-9.454-9.28 1.934-13.67l112.22-43.228c5.15-1.732 9.68 1.157 8.27 13.67z"/>
+    </svg>
+    Helpline 2
+  </a>
+</div>
+
 <script>
-  // Custom dropdown variables
+  // Dropdown select logic
   const customSelect = document.getElementById('customPaymentSelect');
   const selected = customSelect.querySelector('.select-selected');
   const optionsContainer = customSelect.querySelector('.select-items');
   let selectedPaymentValue = '';
 
-  // Payment info text with copy button
   const paymentTexts = {
-    Bk: `Bkash Send Money<br>
-         <span id="paymentNumber">01798290256</span>
-         <span class="copy-btn" id="copyBtn" title="Click to copy">copy</span><br>
-         Then enter the Trxid above`,
-    Ng: `Nagad Send Money<br>
-         <span id="paymentNumber">9856001060189572</span>
-         <span class="copy-btn" id="copyBtn" title="Click to copy">copy</span><br>
-         Then enter the Trxid above`
+    Bk: `Bkash Send Money<br><span id="paymentNumber">01798290256</span><span class="copy-btn" id="copyBtn" title="Click to copy">copy</span><br>Then enter the Trxid above`,
+    Ng: `Nagad Send Money<br><span id="paymentNumber">9856001060189572</span><span class="copy-btn" id="copyBtn" title="Click to copy">copy</span><br>Then enter the Trxid above`
   };
 
-  // Show/hide dropdown options
   selected.addEventListener('click', () => {
     const expanded = customSelect.getAttribute('aria-expanded') === 'true';
     if (expanded) {
@@ -233,37 +296,6 @@
     }
   });
 
-  // Keyboard navigation (optional)
-  customSelect.addEventListener('keydown', (e) => {
-    const items = optionsContainer.querySelectorAll('div');
-    let focusedIndex = Array.from(items).findIndex(i => i === document.activeElement);
-
-    if(e.key === 'ArrowDown') {
-      e.preventDefault();
-      if(optionsContainer.style.display !== 'block') {
-        selected.click();
-      } else {
-        const nextIndex = (focusedIndex + 1) % items.length;
-        items[nextIndex].focus();
-      }
-    } else if(e.key === 'ArrowUp') {
-      e.preventDefault();
-      if(optionsContainer.style.display === 'block') {
-        const prevIndex = (focusedIndex - 1 + items.length) % items.length;
-        items[prevIndex].focus();
-      }
-    } else if(e.key === 'Enter' && document.activeElement.parentNode === optionsContainer) {
-      e.preventDefault();
-      document.activeElement.click();
-    } else if(e.key === 'Escape') {
-      optionsContainer.style.display = 'none';
-      customSelect.setAttribute('aria-expanded', 'false');
-      selected.classList.remove('select-arrow-active');
-      selected.focus();
-    }
-  });
-
-  // Option click selects value
   optionsContainer.querySelectorAll('div').forEach(option => {
     option.addEventListener('click', () => {
       selected.textContent = option.textContent;
@@ -277,7 +309,6 @@
     });
   });
 
-  // Close dropdown if click outside
   document.addEventListener('click', (e) => {
     if (!customSelect.contains(e.target)) {
       optionsContainer.style.display = 'none';
@@ -286,7 +317,6 @@
     }
   });
 
-  // Show payment info + copy functionality
   function updatePaymentInfo(val) {
     if(paymentTexts[val]) {
       paymentInfo.innerHTML = paymentTexts[val];
@@ -311,31 +341,25 @@
     }
   }
 
-  // Elements and buttons for validation
   const teamname = document.getElementById('teamname');
   const tgUsername = document.getElementById('tgUsername');
   const mobile = document.getElementById('mobile');
   const trxid = document.getElementById('trxid');
   const paymentInfo = document.getElementById('paymentInfo');
-
   const continueBtn = document.getElementById('continueBtn');
   const uploadBtn = document.getElementById('uploadBtn');
-
   const step1 = document.getElementById('step1');
   const step2 = document.getElementById('step2');
 
-  // Validate team name: only uppercase letters, numbers, space, dash, apostrophe
   function validateTeamName(name) {
     const upperName = name.toUpperCase();
     const regex = /^[A-Z0-9 \-']+$/;
     return regex.test(upperName);
   }
 
-  // Validate entire step 1 form
   function validateStep1() {
     const teamNameValue = teamname.value.trim();
     const isTeamNameValid = validateTeamName(teamNameValue);
-
     if (
       teamNameValue !== '' &&
       isTeamNameValid &&
@@ -352,7 +376,6 @@
     }
   }
 
-  // On input in teamname: force uppercase, remove invalid chars, validate
   teamname.addEventListener('input', () => {
     let val = teamname.value.toUpperCase();
     val = val.replace(/[^A-Z0-9 \-']/g, '');
@@ -360,7 +383,6 @@
     validateStep1();
   });
 
-  // Validate other inputs on input event
   [tgUsername, mobile, trxid].forEach(el => {
     el.addEventListener('input', validateStep1);
   });
@@ -374,48 +396,37 @@
     step2.classList.remove('hidden');
   });
 
-  uploadBtn.addEventListener('click', () => {
-    // Collect players
-    const players = [];
-    for (let i = 1; i <= 5; i++) {
-      const val = document.getElementById('player' + i).value.trim();
-      if (val) players.push(val);
+  // Telegram popup button
+  const serviceBtn = document.getElementById('serviceBtn');
+  const contactPopup = document.getElementById('contactPopup');
+
+  serviceBtn.addEventListener('click', () => {
+    const isActive = contactPopup.classList.contains('active');
+    if (isActive) {
+      contactPopup.classList.remove('active');
+      contactPopup.setAttribute('aria-hidden', 'true');
+    } else {
+      contactPopup.classList.add('active');
+      contactPopup.setAttribute('aria-hidden', 'false');
     }
-    if (players.length === 0) {
-      alert("Please enter at least one player name.");
-      return;
-    }
-
-    // reCAPTCHA check
-    const captchaResponse = grecaptcha.getResponse();
-    if (captchaResponse.length === 0) {
-      alert("Please verify that you are not a robot.");
-      return;
-    }
-
-    if (!confirm("Are you sure you want to upload this entry? Please check everything carefully.")) {
-      return;
-    }
-
-    const formData = {
-      teamname: teamname.value.trim(),
-      tgUsername: tgUsername.value.trim(),
-      mobile: mobile.value.trim(),
-      paymentMethod: selectedPaymentValue,
-      trxid: trxid.value.trim(),
-      players: players,
-      key: 'YOUR_SECRET_KEY_HERE'
-    };
-
-    console.log('Form Data to submit:', formData);
-
-    // Reset reCAPTCHA
-    grecaptcha.reset();
   });
 
-  // Initial validation call (in case of cached values)
-  validateStep1();
-</script>
+  // Close popup when clicking outside
+  document.addEventListener('click', (e) => {
+    if (!contactPopup.contains(e.target) && !serviceBtn.contains(e.target)) {
+      contactPopup.classList.remove('active');
+      contactPopup.setAttribute('aria-hidden', 'true');
+    }
+  });
 
+  // Close popup on contact click and open link normally
+  contactPopup.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => {
+      contactPopup.classList.remove('active');
+      contactPopup.setAttribute('aria-hidden', 'true');
+      // Link opens in new tab by default (target="_blank")
+    });
+  });
+</script>
 </body>
 </html>
