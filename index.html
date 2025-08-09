@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-<title>Group Form</title>
+<title>Group Form with reCAPTCHA</title>
 <style>
   body {
     font-family: Arial, sans-serif;
@@ -59,7 +59,14 @@
   #adminList {
     display: none;
   }
+  /* Center the reCAPTCHA */
+  .g-recaptcha {
+    margin: 10px 0;
+  }
 </style>
+
+<!-- Google reCAPTCHA API script -->
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
 <body>
 
@@ -80,6 +87,9 @@
   <input type="text" id="trxid" placeholder="Enter Trxid" autocomplete="off" />
   <input type="text" id="teamName" placeholder="Enter team name" autocomplete="off" />
 
+  <!-- reCAPTCHA widget -->
+  <div class="g-recaptcha" data-sitekey="6Lfuyp8rAAAAAPZ2dyTAU2TwTed-x0X1d_jsDtCX"></div>
+
   <button id="uploadBtn">Upload</button>
 
   <div class="output" id="output"></div>
@@ -92,10 +102,8 @@
 </div>
 
 <script>
-  // Admin functionality disabled (no admin mode)
   let entries = [];
 
-  // Sanitize input for HTML
   function escapeHtml(text) {
     if (!text) return "";
     return text.replace(/[&<>"']/g, function(m) {
@@ -126,6 +134,12 @@
   }
 
   document.getElementById("uploadBtn").addEventListener("click", () => {
+    const captchaResponse = grecaptcha.getResponse();
+    if (captchaResponse.length === 0) {
+      alert("Please verify that you are not a robot.");
+      return;
+    }
+
     if (!confirm("Are you sure you want to upload this entry? Please check everything carefully.")) {
       return;
     }
@@ -142,6 +156,9 @@
 
     // Show output for current user only
     document.getElementById("output").innerHTML = generateFormattedText(data).replace(/\n/g, "<br>");
+
+    // Reset reCAPTCHA after submission
+    grecaptcha.reset();
   });
 </script>
 
