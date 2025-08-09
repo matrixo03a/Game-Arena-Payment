@@ -272,7 +272,7 @@
         <input type="text" id="player4" name="player4" placeholder="Player 4 Name" autocomplete="off" />
         <input type="text" id="player5" name="player5" placeholder="Player 5 Name" autocomplete="off" />
       </div>
-      <div class="g-recaptcha" data-sitekey="6LcAy58rAAAAABuoRRTaNeOHkbdo9NJUDiuqbq22"></div>
+      <div class="g-recaptcha" data-sitekey="6LdJNaArAAAAADVJ5YEKTaLSUoVca9pHuQ3PnT1B"></div>
       <button id="uploadBtn" type="submit">Submit</button>
     </div>
   </form>
@@ -395,7 +395,6 @@
   const step2 = document.getElementById('step2');
   const groupTitle = document.getElementById('groupTitle');
   
-  // Get the form element
   const registrationForm = document.getElementById('registrationForm');
 
   function validateTeamName(name) {
@@ -474,12 +473,10 @@
   
   // This is the new part for Formspree submission
   registrationForm.addEventListener('submit', async (e) => {
-    e.preventDefault(); // Stop the default form submission
+    e.preventDefault();
     
-    // Disable the button to prevent double-clicks
     uploadBtn.disabled = true;
     
-    // Get all form data
     const formData = new FormData(registrationForm);
     
     try {
@@ -493,9 +490,7 @@
       
       if (response.ok) {
         alert("Registration successful! We have received your details.");
-        registrationForm.reset(); // Clear the form
-        // Redirect the user to a "Thank You" page or confirmation page
-        // window.location.href = '/thank-you.html'; 
+        registrationForm.reset();
       } else {
         const data = await response.json();
         if (data.errors) {
@@ -507,7 +502,6 @@
     } catch (error) {
       alert("An error occurred. Please try again.");
     } finally {
-      // Re-enable the button
       uploadBtn.disabled = false;
     }
   });
