@@ -17,10 +17,18 @@
     margin: 30px auto;
     padding: 15px;
   }
-  h1 {
+  h1, h2 {
     text-align: center;
+  }
+  h1 {
     font-size: 20px;
     margin-bottom: 10px;
+  }
+  h2 {
+    font-size: 18px;
+    margin-bottom: 10px;
+    color: #ccc;
+    font-weight: bold;
   }
   input, button {
     width: 100%;
@@ -69,8 +77,8 @@
     margin: 10px 0;
   }
   .players input {
-    padding: 8px 10px;
-    font-size: 14px;
+    padding: 12px 10px;
+    font-size: 16px;
     margin: 4px 0;
     border-radius: 5px;
     width: 100%;
@@ -151,7 +159,8 @@
 <body>
 
 <div class="container">
-  <h1>GROUP A</h1>
+  <!-- Step 1 heading -->
+  <h1 id="groupTitle">Players Name</h1>
   
   <div id="step1">
     <input type="text" id="teamname" placeholder="Enter team name" autocomplete="off" />
@@ -176,6 +185,7 @@
   </div>
   
   <div id="step2" class="hidden">
+    <!-- Players Name -->
     <div class="players">
       <input type="text" id="player1" placeholder="Player 1 Name" autocomplete="off" />
       <input type="text" id="player2" placeholder="Player 2 Name" autocomplete="off" />
@@ -186,7 +196,7 @@
 
     <div class="g-recaptcha" data-sitekey="6LcAy58rAAAAABuoRRTaNeOHkbdo9NJUDiuqbq22"></div>
     
-    <button id="uploadBtn">Upload</button>
+    <button id="uploadBtn">Submit</button>
   </div>
 </div>
 
@@ -331,7 +341,7 @@
       isTeamNameValid &&
       tgUsername.value.trim() !== '' &&
       mobile.value.trim() !== '' &&
-      id.value.trim() !== '' &&
+      trxid.value.trim() !== '' &&
       selectedPaymentValue !== ''
     ) {
       continueBtn.disabled = false;
