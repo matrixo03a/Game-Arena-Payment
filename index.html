@@ -151,7 +151,7 @@
 <body>
 
 <div class="container">
-  <h1>Group Form</h1>
+  <h1>GROUP A</h1>
   
   <div id="step1">
     <input type="text" id="teamname" placeholder="Enter team name" autocomplete="off" />
@@ -170,7 +170,7 @@
 
     <div id="paymentInfo" class="hidden" aria-live="polite"></div>
 
-    <input type="text" id="trxid" placeholder="Enter Trxid" autocomplete="off" />
+    <input type="text" id="trxid" placeholder="Enter Transaction Id" autocomplete="off" />
     
     <button id="continueBtn" disabled>Continue</button>
   </div>
@@ -199,16 +199,14 @@
 
   // Payment info text with copy button
   const paymentTexts = {
-    Bk: `Bkash Payment Instructions:<br>
-         Send your payment to number: 
-         <span id="paymentNumber">017XXXXXXXX</span>
+    Bk: `Bkash Send Money<br>
+         <span id="paymentNumber">01798290256</span>
          <span class="copy-btn" id="copyBtn" title="Click to copy">copy</span><br>
-         Then enter the Trxid above.`,
-    Ng: `Nagod Payment Instructions:<br>
-         Send your payment to number: 
-         <span id="paymentNumber">018XXXXXXXX</span>
+         Then enter the Trxid above`,
+    Ng: `Nagad Send Money<br>
+         <span id="paymentNumber">9856001060189572</span>
          <span class="copy-btn" id="copyBtn" title="Click to copy">copy</span><br>
-         Then enter the Trxid above.`
+         Then enter the Trxid above`
   };
 
   // Show/hide dropdown options
@@ -333,7 +331,7 @@
       isTeamNameValid &&
       tgUsername.value.trim() !== '' &&
       mobile.value.trim() !== '' &&
-      trxid.value.trim() !== '' &&
+      id.value.trim() !== '' &&
       selectedPaymentValue !== ''
     ) {
       continueBtn.disabled = false;
