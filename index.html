@@ -283,13 +283,11 @@
     Join Telegram
   </a>
 </div>
-
 <button id="newServiceBtn" aria-label="Contact customer service" title="Customer Service" type="button">
   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
     <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm-1-8.75c.69 0 1.25.56 1.25 1.25s-.56 1.25-1.25 1.25-1.25-.56-1.25-1.25.56-1.25 1.25-1.25z"/>
   </svg>
 </button>
-
 <div id="newContactPopup" role="menu" aria-hidden="true" aria-label="Customer service options">
   <a href="https://t.me/NeoEchoo" target="_blank" rel="noopener" role="menuitem" tabindex="0">
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
@@ -310,10 +308,9 @@
   const selected = customSelect.querySelector('.select-selected');
   const optionsContainer = customSelect.querySelector('.select-items');
   let selectedPaymentValue = '';
-
   const paymentTexts = {
-    Bk: `Bkash Send Money<br><span id="paymentNumber">01798290256</span><span class="copy-btn" id="copyBtn" title="Click to copy">copy</span><br>Then enter the Trxid above`,
-    Ng: `Nagad Send Money<br><span id="paymentNumber">9856001060189572</span><span class="copy-btn" id="copyBtn" title="Click to copy">copy</span><br>Then enter the Trxid above`
+    Bk: 'Bkash Send Money<br><span id="paymentNumber">01798290256</span><span class="copy-btn" id="copyBtn" title="Click to copy">copy</span><br>Then enter the Trxid above',
+    Ng: 'Nagad Send Money<br><span id="paymentNumber">9856001060189572</span><span class="copy-btn" id="copyBtn" title="Click to copy">copy</span><br>Then enter the Trxid above'
   };
 
   selected.addEventListener('click', () => {
@@ -336,11 +333,11 @@
       selected.setAttribute('data-value', selectedPaymentValue);
       let paymentMethodInput = document.getElementById('paymentMethod');
       if (!paymentMethodInput) {
-          paymentMethodInput = document.createElement('input');
-          paymentMethodInput.type = 'hidden';
-          paymentMethodInput.id = 'paymentMethod';
-          paymentMethodInput.name = 'paymentMethod';
-          document.getElementById('registrationForm').appendChild(paymentMethodInput);
+        paymentMethodInput = document.createElement('input');
+        paymentMethodInput.type = 'hidden';
+        paymentMethodInput.id = 'paymentMethod';
+        paymentMethodInput.name = 'paymentMethod';
+        document.getElementById('registrationForm').appendChild(paymentMethodInput);
       }
       paymentMethodInput.value = option.textContent;
 
@@ -394,12 +391,12 @@
   const step1 = document.getElementById('step1');
   const step2 = document.getElementById('step2');
   const groupTitle = document.getElementById('groupTitle');
-  
+
   const registrationForm = document.getElementById('registrationForm');
 
   function validateTeamName(name) {
     const upperName = name.toUpperCase();
-    const regex = /^[A-Z0-9 \-']+$/;
+    const regex = /^[A-Z0-9 -']+$/;
     return regex.test(upperName);
   }
 
@@ -424,7 +421,7 @@
 
   teamname.addEventListener('input', () => {
     let val = teamname.value.toUpperCase();
-    val = val.replace(/[^A-Z0-9 \-']/g, '');
+    val = val.replace(/[^A-Z0-9 -']/g, '');
     teamname.value = val;
     validateStep1();
   });
@@ -470,15 +467,15 @@
       newContactPopup.setAttribute('aria-hidden', 'true');
     });
   });
-  
-  // This is the new part for Formspree submission
+
+  // --- ei khane theke code ta change kora holo ---
   registrationForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    
+
     uploadBtn.disabled = true;
-    
+
     const formData = new FormData(registrationForm);
-    
+
     try {
       const response = await fetch(registrationForm.action, {
         method: 'POST',
@@ -487,24 +484,32 @@
           'Accept': 'application/json'
         }
       });
-      
+
       if (response.ok) {
-        alert("Registration successful! We have received your details.");
-        registrationForm.reset();
+        alert("Registration successful! Thank you for registering your team.");
+        registrationForm.reset(); // Form reset
+        step2.classList.add('hidden');
+        step1.classList.remove('hidden');
+        groupTitle.textContent = "Group A";
+        continueBtn.disabled = true;
+        continueBtn.classList.remove('enabled');
+        paymentInfo.innerHTML = '';
+        paymentInfo.classList.add('hidden');
       } else {
         const data = await response.json();
         if (data.errors) {
           alert(`Submission failed: ${data.errors.map(err => err.message).join(', ')}`);
         } else {
-          alert("Oops! There was a problem with your submission.");
+          alert("Oops! There was a problem with your submission. Please check your details and try again.");
         }
       }
     } catch (error) {
-      alert("An error occurred. Please try again.");
+      alert("An error occurred. Please try again later.");
     } finally {
       uploadBtn.disabled = false;
     }
   });
 </script>
+
 </body>
 </html>
