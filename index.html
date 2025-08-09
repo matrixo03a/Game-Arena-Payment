@@ -248,7 +248,7 @@
 <body>
 <div class="container">
   <h1 id="groupTitle">Group A</h1>
-  <form id="registrationForm" action="https://formspree.io/f/YOUR_FORMSPREE_ENDPOINT" method="POST">
+  <form id="registrationForm" action="https://formspree.io/f/mdkdyoqw" method="POST">
     <div id="step1">
       <input type="text" id="teamname" name="teamname" placeholder="Enter team name" autocomplete="off" />
       <input type="text" id="tgUsername" name="tgUsername" placeholder="Enter telegram username" autocomplete="off" />
@@ -341,7 +341,7 @@
           paymentMethodInput.type = 'hidden';
           paymentMethodInput.id = 'paymentMethod';
           paymentMethodInput.name = 'paymentMethod';
-          document.getElementById('step1').appendChild(paymentMethodInput);
+          document.getElementById('registrationForm').appendChild(paymentMethodInput);
       }
       paymentMethodInput.value = option.textContent;
 
@@ -495,7 +495,8 @@
       if (response.ok) {
         alert("Registration successful! We have received your details.");
         registrationForm.reset(); // Clear the form
-        // You might want to redirect the user or display a success message
+        // Redirect the user to a "Thank You" page or confirmation page
+        // window.location.href = '/thank-you.html'; 
       } else {
         const data = await response.json();
         if (data.errors) {
