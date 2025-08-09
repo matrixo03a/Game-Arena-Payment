@@ -248,32 +248,34 @@
 <body>
 <div class="container">
   <h1 id="groupTitle">Group A</h1>
-  <div id="step1">
-    <input type="text" id="teamname" placeholder="Enter team name" autocomplete="off" />
-    <input type="text" id="tgUsername" placeholder="Enter telegram username" autocomplete="off" />
-    <input type="text" id="mobile" placeholder="Enter mobile number" autocomplete="off" />
-    <div class="custom-select" id="customPaymentSelect" tabindex="0" aria-haspopup="listbox" aria-expanded="false" role="combobox">
-      <div class="select-selected" aria-live="polite" aria-label="Payment method selection">Select payment method</div>
-      <div class="select-items" role="listbox" tabindex="-1">
-        <div role="option" data-value="Bk" tabindex="0">Bkash</div>
-        <div role="option" data-value="Ng" tabindex="0">Nagod</div>
+  <form id="registrationForm" action="https://formspree.io/f/YOUR_FORMSPREE_ENDPOINT" method="POST">
+    <div id="step1">
+      <input type="text" id="teamname" name="teamname" placeholder="Enter team name" autocomplete="off" />
+      <input type="text" id="tgUsername" name="tgUsername" placeholder="Enter telegram username" autocomplete="off" />
+      <input type="text" id="mobile" name="mobile" placeholder="Enter mobile number" autocomplete="off" />
+      <div class="custom-select" id="customPaymentSelect" tabindex="0" aria-haspopup="listbox" aria-expanded="false" role="combobox">
+        <div class="select-selected" aria-live="polite" aria-label="Payment method selection">Select payment method</div>
+        <div class="select-items" role="listbox" tabindex="-1">
+          <div role="option" data-value="Bk" tabindex="0">Bkash</div>
+          <div role="option" data-value="Ng" tabindex="0">Nagod</div>
+        </div>
       </div>
+      <div id="paymentInfo" class="hidden" aria-live="polite"></div>
+      <input type="text" id="trxid" name="trxid" placeholder="Enter Transaction Id" autocomplete="off" />
+      <button id="continueBtn" type="button" disabled>Continue</button>
     </div>
-    <div id="paymentInfo" class="hidden" aria-live="polite"></div>
-    <input type="text" id="trxid" placeholder="Enter Transaction Id" autocomplete="off" />
-    <button id="continueBtn" disabled>Continue</button>
-  </div>
-  <div id="step2" class="hidden">
-    <div class="players">
-      <input type="text" id="player1" placeholder="Player 1 Name" autocomplete="off" />
-      <input type="text" id="player2" placeholder="Player 2 Name" autocomplete="off" />
-      <input type="text" id="player3" placeholder="Player 3 Name" autocomplete="off" />
-      <input type="text" id="player4" placeholder="Player 4 Name" autocomplete="off" />
-      <input type="text" id="player5" placeholder="Player 5 Name" autocomplete="off" />
+    <div id="step2" class="hidden">
+      <div class="players">
+        <input type="text" id="player1" name="player1" placeholder="Player 1 Name" autocomplete="off" />
+        <input type="text" id="player2" name="player2" placeholder="Player 2 Name" autocomplete="off" />
+        <input type="text" id="player3" name="player3" placeholder="Player 3 Name" autocomplete="off" />
+        <input type="text" id="player4" name="player4" placeholder="Player 4 Name" autocomplete="off" />
+        <input type="text" id="player5" name="player5" placeholder="Player 5 Name" autocomplete="off" />
+      </div>
+      <div class="g-recaptcha" data-sitekey="6LcAy58rAAAAABuoRRTaNeOHkbdo9NJUDiuqbq22"></div>
+      <button id="uploadBtn" type="submit">Submit</button>
     </div>
-    <div class="g-recaptcha" data-sitekey="6LcAy58rAAAAABuoRRTaNeOHkbdo9NJUDiuqbq22"></div>
-    <button id="uploadBtn">Submit</button>
-  </div>
+  </form>
   <a id="joinTelegramBtn" href="https://t.me/Gamee_Arena" target="_blank" rel="noopener noreferrer">
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
       <path fill="currentColor" d="M11.944 0a12 12 0 1 0 0 24a12 12 0 0 0 0-24zm5.623 8.653c-.115 1.488-.934 6.787-1.127 8.016-.16.994-.535 1.295-1.314.896-.764-.393-2.221-1.246-3.085-1.884-.962-.714-.305-1.025.26-1.592.176-.176 3.428-3.13 3.514-3.41-.019-.06-.039-.124-.059-.187-.33-.016-.71.127-2.316 1.258-1.082.78-1.84 1.32-2.887 2.083-.758.552-1.426.804-2.12.78-.71-.02-1.956-.37-2.695-.615-.81-.26-1.442-.4-1.41-1.05.02-.454.675-.684 1.832-1.122 5.372-2.022 7.15-2.699 8.18-3.093 2.148-.82 2.766-1.01 3.256-1.006.495.004.87.214 1.135.61.268.4.34 1.02.23 1.77z"/>
@@ -332,6 +334,17 @@
       selected.textContent = option.textContent;
       selectedPaymentValue = option.getAttribute('data-value');
       selected.setAttribute('data-value', selectedPaymentValue);
+      // Added a hidden input to send the payment method value to Formspree
+      let paymentMethodInput = document.getElementById('paymentMethod');
+      if (!paymentMethodInput) {
+          paymentMethodInput = document.createElement('input');
+          paymentMethodInput.type = 'hidden';
+          paymentMethodInput.id = 'paymentMethod';
+          paymentMethodInput.name = 'paymentMethod';
+          document.getElementById('step1').appendChild(paymentMethodInput);
+      }
+      paymentMethodInput.value = option.textContent;
+
       optionsContainer.style.display = 'none';
       customSelect.setAttribute('aria-expanded', 'false');
       selected.classList.remove('select-arrow-active');
@@ -382,6 +395,9 @@
   const step1 = document.getElementById('step1');
   const step2 = document.getElementById('step2');
   const groupTitle = document.getElementById('groupTitle');
+  
+  // Get the form element
+  const registrationForm = document.getElementById('registrationForm');
 
   function validateTeamName(name) {
     const upperName = name.toUpperCase();
@@ -455,6 +471,45 @@
       newContactPopup.classList.remove('active');
       newContactPopup.setAttribute('aria-hidden', 'true');
     });
+  });
+  
+  // This is the new part for Formspree submission
+  registrationForm.addEventListener('submit', async (e) => {
+    e.preventDefault(); // Stop the default form submission
+    
+    // Disable the button to prevent double-clicks
+    uploadBtn.disabled = true;
+    
+    // Get all form data
+    const formData = new FormData(registrationForm);
+    
+    try {
+      const response = await fetch(registrationForm.action, {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'Accept': 'application/json'
+        }
+      });
+      
+      if (response.ok) {
+        alert("Registration successful! We have received your details.");
+        registrationForm.reset(); // Clear the form
+        // You might want to redirect the user or display a success message
+      } else {
+        const data = await response.json();
+        if (data.errors) {
+          alert(`Submission failed: ${data.errors.map(err => err.message).join(', ')}`);
+        } else {
+          alert("Oops! There was a problem with your submission.");
+        }
+      }
+    } catch (error) {
+      alert("An error occurred. Please try again.");
+    } finally {
+      // Re-enable the button
+      uploadBtn.disabled = false;
+    }
   });
 </script>
 </body>
