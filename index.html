@@ -334,7 +334,6 @@
       selected.textContent = option.textContent;
       selectedPaymentValue = option.getAttribute('data-value');
       selected.setAttribute('data-value', selectedPaymentValue);
-      // Added a hidden input to send the payment method value to Formspree
       let paymentMethodInput = document.getElementById('paymentMethod');
       if (!paymentMethodInput) {
           paymentMethodInput = document.createElement('input');
