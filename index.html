@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-<title>Group Form with reCAPTCHA</title>
+<title>Game Arena</title>
 <style>
   body {
     font-family: Arial, sans-serif;
@@ -14,7 +14,7 @@
   }
   .container {
     max-width: 500px;
-    margin: auto;
+    margin: 30px auto;
     padding: 15px;
   }
   h1 {
@@ -22,7 +22,7 @@
     font-size: 20px;
     margin-bottom: 10px;
   }
-  input, select, button {
+  input, button {
     width: 100%;
     padding: 12px;
     font-size: 16px;
@@ -30,64 +30,355 @@
     border-radius: 6px;
     border: none;
     box-sizing: border-box;
-  }
-  input, select {
     background: #1e1e1e;
     color: white;
   }
+  /* Team name input styling: bold and uppercase */
+  #teamname {
+    font-weight: bold;
+    text-transform: uppercase;
+  }
   button {
-    background: gold;
-    color: black;
     font-weight: bold;
     cursor: pointer;
   }
-  button:hover {
+  button:disabled {
+    background: #555;
+    color: #aaa;
+    cursor: not-allowed;
+  }
+  #continueBtn {
+    background: gray;
+    color: #ddd;
+  }
+  #continueBtn.enabled {
+    background: gold;
+    color: black;
+  }
+  #uploadBtn {
+    background: gold;
+    color: black;
+  }
+  #uploadBtn:hover {
     background: orange;
   }
-  /* Admin list hidden for everyone */
-  #adminList {
+  .hidden {
     display: none;
   }
-  /* Center the reCAPTCHA */
   .g-recaptcha {
     margin: 10px 0;
   }
+  .players input {
+    padding: 8px 10px;
+    font-size: 14px;
+    margin: 4px 0;
+    border-radius: 5px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  #paymentInfo {
+    background: #2a2a2a;
+    border-radius: 6px;
+    padding: 12px;
+    margin-top: 4px;
+    font-size: 14px;
+    line-height: 1.4;
+    color: #ccc;
+  }
+  /* copy button style */
+  .copy-btn {
+    display: inline-block;
+    background: #444;
+    color: #ddd;
+    font-size: 12px;
+    padding: 2px 8px;
+    margin-left: 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    user-select: none;
+    vertical-align: middle;
+    transition: background-color 0.3s;
+  }
+  .copy-btn:hover {
+    background: #666;
+  }
+  /* Custom dropdown styles */
+  .custom-select {
+    position: relative;
+    user-select: none;
+    margin: 12px 0;
+  }
+  .select-selected {
+    background: #1e1e1e;
+    padding: 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    color: white;
+  }
+  .select-selected:after {
+    content: "\25BC";
+    float: right;
+    margin-left: 10px;
+    color: #aaa;
+  }
+  .select-selected.select-arrow-active:after {
+    content: "\25B2";
+  }
+  .select-items {
+    position: absolute;
+    background: #2a2a2a;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 99;
+    border-radius: 0 0 6px 6px;
+    max-height: 150px;
+    overflow-y: auto;
+    display: none;
+  }
+  .select-items div {
+    padding: 12px;
+    cursor: pointer;
+    color: white;
+  }
+  .select-items div:hover {
+    background: #444;
+  }
 </style>
 
-<!-- Google reCAPTCHA API script -->
 <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
 <body>
 
 <div class="container">
   <h1>Group Form</h1>
-  <input type="text" id="tgName" placeholder="Enter team name" autocomplete="off" />
-  <input type="text" id="tgUsername" placeholder="Enter telegram username" autocomplete="off" />
-  <input type="text" id="mobile" placeholder="Enter mobile number" autocomplete="off" />
+  
+  <div id="step1">
+    <input type="text" id="teamname" placeholder="Enter team name" autocomplete="off" />
+    <input type="text" id="tgUsername" placeholder="Enter telegram username" autocomplete="off" />
+    <input type="text" id="mobile" placeholder="Enter mobile number" autocomplete="off" />
 
-  <select id="paymentMethod">
-    <option value="">Select payment method</option>
-    <option value="Bk">Bk</option>
-    <option value="Ng">Ng</option>
-  </select>
+    <!-- Custom dropdown -->
+    <label for="paymentMethod" style="display:none;">Select payment method</label>
+    <div class="custom-select" id="customPaymentSelect" tabindex="0" aria-haspopup="listbox" aria-expanded="false" role="combobox">
+      <div class="select-selected" aria-live="polite" aria-label="Payment method selection">Select payment method</div>
+      <div class="select-items" role="listbox" tabindex="-1">
+        <div role="option" data-value="Bk" tabindex="0">Bkash</div>
+        <div role="option" data-value="Ng" tabindex="0">Nagod</div>
+      </div>
+    </div>
 
-  <input type="text" id="trxid" placeholder="Enter Trxid" autocomplete="off" />
-  <input type="text" id="teamName" placeholder="Enter team name" autocomplete="off" />
+    <div id="paymentInfo" class="hidden" aria-live="polite"></div>
 
-  <!-- reCAPTCHA widget -->
-  <div class="g-recaptcha" data-sitekey="6LcAy58rAAAAABuoRRTaNeOHkbdo9NJUDiuqbq22"></div>
+    <input type="text" id="trxid" placeholder="Enter Trxid" autocomplete="off" />
+    
+    <button id="continueBtn" disabled>Continue</button>
+  </div>
+  
+  <div id="step2" class="hidden">
+    <div class="players">
+      <input type="text" id="player1" placeholder="Player 1 Name" autocomplete="off" />
+      <input type="text" id="player2" placeholder="Player 2 Name" autocomplete="off" />
+      <input type="text" id="player3" placeholder="Player 3 Name" autocomplete="off" />
+      <input type="text" id="player4" placeholder="Player 4 Name" autocomplete="off" />
+      <input type="text" id="player5" placeholder="Player 5 Name" autocomplete="off" />
+    </div>
 
-  <button id="uploadBtn">Upload</button>
-</div>
-
-<!-- Admin-only list hidden -->
-<div id="adminList">
-  <h2>Admin Uploaded Entries</h2>
-  <div id="entriesContainer"></div>
+    <div class="g-recaptcha" data-sitekey="6LcAy58rAAAAABuoRRTaNeOHkbdo9NJUDiuqbq22"></div>
+    
+    <button id="uploadBtn">Upload</button>
+  </div>
 </div>
 
 <script>
-  document.getElementById("uploadBtn").addEventListener("click", () => {
+  // Custom dropdown variables
+  const customSelect = document.getElementById('customPaymentSelect');
+  const selected = customSelect.querySelector('.select-selected');
+  const optionsContainer = customSelect.querySelector('.select-items');
+  let selectedPaymentValue = '';
+
+  // Payment info text with copy button
+  const paymentTexts = {
+    Bk: `Bkash Payment Instructions:<br>
+         Send your payment to number: 
+         <span id="paymentNumber">017XXXXXXXX</span>
+         <span class="copy-btn" id="copyBtn" title="Click to copy">copy</span><br>
+         Then enter the Trxid above.`,
+    Ng: `Nagod Payment Instructions:<br>
+         Send your payment to number: 
+         <span id="paymentNumber">018XXXXXXXX</span>
+         <span class="copy-btn" id="copyBtn" title="Click to copy">copy</span><br>
+         Then enter the Trxid above.`
+  };
+
+  // Show/hide dropdown options
+  selected.addEventListener('click', () => {
+    const expanded = customSelect.getAttribute('aria-expanded') === 'true';
+    if (expanded) {
+      optionsContainer.style.display = 'none';
+      customSelect.setAttribute('aria-expanded', 'false');
+      selected.classList.remove('select-arrow-active');
+    } else {
+      optionsContainer.style.display = 'block';
+      customSelect.setAttribute('aria-expanded', 'true');
+      selected.classList.add('select-arrow-active');
+    }
+  });
+
+  // Keyboard navigation (optional)
+  customSelect.addEventListener('keydown', (e) => {
+    const items = optionsContainer.querySelectorAll('div');
+    let focusedIndex = Array.from(items).findIndex(i => i === document.activeElement);
+
+    if(e.key === 'ArrowDown') {
+      e.preventDefault();
+      if(optionsContainer.style.display !== 'block') {
+        selected.click();
+      } else {
+        const nextIndex = (focusedIndex + 1) % items.length;
+        items[nextIndex].focus();
+      }
+    } else if(e.key === 'ArrowUp') {
+      e.preventDefault();
+      if(optionsContainer.style.display === 'block') {
+        const prevIndex = (focusedIndex - 1 + items.length) % items.length;
+        items[prevIndex].focus();
+      }
+    } else if(e.key === 'Enter' && document.activeElement.parentNode === optionsContainer) {
+      e.preventDefault();
+      document.activeElement.click();
+    } else if(e.key === 'Escape') {
+      optionsContainer.style.display = 'none';
+      customSelect.setAttribute('aria-expanded', 'false');
+      selected.classList.remove('select-arrow-active');
+      selected.focus();
+    }
+  });
+
+  // Option click selects value
+  optionsContainer.querySelectorAll('div').forEach(option => {
+    option.addEventListener('click', () => {
+      selected.textContent = option.textContent;
+      selectedPaymentValue = option.getAttribute('data-value');
+      selected.setAttribute('data-value', selectedPaymentValue);
+      optionsContainer.style.display = 'none';
+      customSelect.setAttribute('aria-expanded', 'false');
+      selected.classList.remove('select-arrow-active');
+      validateStep1();
+      updatePaymentInfo(selectedPaymentValue);
+    });
+  });
+
+  // Close dropdown if click outside
+  document.addEventListener('click', (e) => {
+    if (!customSelect.contains(e.target)) {
+      optionsContainer.style.display = 'none';
+      customSelect.setAttribute('aria-expanded', 'false');
+      selected.classList.remove('select-arrow-active');
+    }
+  });
+
+  // Show payment info + copy functionality
+  function updatePaymentInfo(val) {
+    if(paymentTexts[val]) {
+      paymentInfo.innerHTML = paymentTexts[val];
+      paymentInfo.classList.remove('hidden');
+
+      const copyBtn = document.getElementById('copyBtn');
+      const paymentNumber = document.getElementById('paymentNumber');
+
+      if(copyBtn && paymentNumber) {
+        copyBtn.onclick = () => {
+          const textToCopy = paymentNumber.textContent;
+          navigator.clipboard.writeText(textToCopy).then(() => {
+            alert(`Copied: ${textToCopy}`);
+          }).catch(() => {
+            alert('Copy failed. Please copy manually.');
+          });
+        };
+      }
+    } else {
+      paymentInfo.innerHTML = '';
+      paymentInfo.classList.add('hidden');
+    }
+  }
+
+  // Elements and buttons for validation
+  const teamname = document.getElementById('teamname');
+  const tgUsername = document.getElementById('tgUsername');
+  const mobile = document.getElementById('mobile');
+  const trxid = document.getElementById('trxid');
+  const paymentInfo = document.getElementById('paymentInfo');
+
+  const continueBtn = document.getElementById('continueBtn');
+  const uploadBtn = document.getElementById('uploadBtn');
+
+  const step1 = document.getElementById('step1');
+  const step2 = document.getElementById('step2');
+
+  // Validate team name: only uppercase letters, numbers, space, dash, apostrophe
+  function validateTeamName(name) {
+    const upperName = name.toUpperCase();
+    const regex = /^[A-Z0-9 \-']+$/;
+    return regex.test(upperName);
+  }
+
+  // Validate entire step 1 form
+  function validateStep1() {
+    const teamNameValue = teamname.value.trim();
+    const isTeamNameValid = validateTeamName(teamNameValue);
+
+    if (
+      teamNameValue !== '' &&
+      isTeamNameValid &&
+      tgUsername.value.trim() !== '' &&
+      mobile.value.trim() !== '' &&
+      trxid.value.trim() !== '' &&
+      selectedPaymentValue !== ''
+    ) {
+      continueBtn.disabled = false;
+      continueBtn.classList.add('enabled');
+    } else {
+      continueBtn.disabled = true;
+      continueBtn.classList.remove('enabled');
+    }
+  }
+
+  // On input in teamname: force uppercase, remove invalid chars, validate
+  teamname.addEventListener('input', () => {
+    let val = teamname.value.toUpperCase();
+    val = val.replace(/[^A-Z0-9 \-']/g, '');
+    teamname.value = val;
+    validateStep1();
+  });
+
+  // Validate other inputs on input event
+  [tgUsername, mobile, trxid].forEach(el => {
+    el.addEventListener('input', validateStep1);
+  });
+
+  continueBtn.addEventListener('click', () => {
+    if (continueBtn.disabled) {
+      alert("Please fill all required fields correctly.");
+      return;
+    }
+    step1.classList.add('hidden');
+    step2.classList.remove('hidden');
+  });
+
+  uploadBtn.addEventListener('click', () => {
+    // Collect players
+    const players = [];
+    for (let i = 1; i <= 5; i++) {
+      const val = document.getElementById('player' + i).value.trim();
+      if (val) players.push(val);
+    }
+    if (players.length === 0) {
+      alert("Please enter at least one player name.");
+      return;
+    }
+
+    // reCAPTCHA check
     const captchaResponse = grecaptcha.getResponse();
     if (captchaResponse.length === 0) {
       alert("Please verify that you are not a robot.");
@@ -98,11 +389,24 @@
       return;
     }
 
-    // Your form data processing here (if any)
+    const formData = {
+      teamname: teamname.value.trim(),
+      tgUsername: tgUsername.value.trim(),
+      mobile: mobile.value.trim(),
+      paymentMethod: selectedPaymentValue,
+      trxid: trxid.value.trim(),
+      players: players,
+      key: 'YOUR_SECRET_KEY_HERE'
+    };
 
-    // Reset reCAPTCHA after submission
+    console.log('Form Data to submit:', formData);
+
+    // Reset reCAPTCHA
     grecaptcha.reset();
   });
+
+  // Initial validation call (in case of cached values)
+  validateStep1();
 </script>
 
 </body>
