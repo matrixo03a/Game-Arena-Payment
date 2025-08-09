@@ -72,10 +72,8 @@
 
 <div class="container">
   <h1>Group Form</h1>
-
-  <input type="text" id="group" placeholder="Enter group name" autocomplete="off" />
-  <input type="text" id="tgName" placeholder="Enter TG name" autocomplete="off" />
-  <input type="text" id="tgUsername" placeholder="Enter TG username" autocomplete="off" />
+  <input type="text" id="tgName" placeholder="Enter team name" autocomplete="off" />
+  <input type="text" id="tgUsername" placeholder="Enter telegram username" autocomplete="off" />
   <input type="text" id="mobile" placeholder="Enter mobile number" autocomplete="off" />
 
   <select id="paymentMethod">
@@ -145,7 +143,7 @@
     }
 
     const data = {
-      group: document.getElementById("group").value.trim(),
+      group: document.getElementById("group") ? document.getElementById("group").value.trim() : "",
       tgName: document.getElementById("tgName").value.trim(),
       tgUsername: document.getElementById("tgUsername").value.trim(),
       mobile: document.getElementById("mobile").value.trim(),
@@ -154,8 +152,7 @@
       teamName: document.getElementById("teamName").value.trim(),
     };
 
-    // Show output for current user only
-    document.getElementById("output").innerHTML = generateFormattedText(data).replace(/\n/g, "<br>");
+    // Output display removed as requested
 
     // Reset reCAPTCHA after submission
     grecaptcha.reset();
