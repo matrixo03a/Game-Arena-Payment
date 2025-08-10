@@ -242,6 +242,13 @@
     fill: #0088cc;
     flex-shrink: 0;
   }
+  .error-message {
+    color: #ff6347;
+    font-size: 12px;
+    margin-top: -4px;
+    margin-bottom: 6px;
+    display: none;
+  }
 </style>
 </head>
 <body>
@@ -250,6 +257,7 @@
   <form id="registrationForm" action="https://formspree.io/f/mpwlkrdy" method="POST">
     <div id="step1">
       <input type="text" id="teamname" name="teamname" placeholder="Enter team name" autocomplete="off" />
+      <div id="teamname-error" class="error-message">Invalid characters. Please use only letters, numbers, hyphens, and spaces.</div>
       <input type="text" id="tgUsername" name="tgUsername" placeholder="Enter telegram username" autocomplete="off" />
       <input type="text" id="mobile" name="mobile" placeholder="Enter mobile number" autocomplete="off" />
       <div class="custom-select" id="customPaymentSelect" tabindex="0" aria-haspopup="listbox" aria-expanded="false" role="combobox">
@@ -377,6 +385,7 @@
   }
 
   const teamname = document.getElementById('teamname');
+  const teamnameError = document.getElementById('teamname-error');
   const tgUsername = document.getElementById('tgUsername');
   const mobile = document.getElementById('mobile');
   const trxid = document.getElementById('trxid');
@@ -398,6 +407,14 @@
   function validateStep1() {
     const teamNameValue = teamname.value.trim();
     const isTeamNameValid = validateTeamName(teamNameValue);
+    
+    // Invalid message show/hide
+    if (teamNameValue !== '' && !isTeamNameValid) {
+        teamnameError.style.display = 'block';
+    } else {
+        teamnameError.style.display = 'none';
+    }
+
     if (
       teamNameValue !== '' &&
       isTeamNameValid &&
@@ -414,10 +431,10 @@
     }
   }
 
+  // Input event listener to validate and show/hide error message
   teamname.addEventListener('input', () => {
-    let val = teamname.value.toUpperCase();
-    val = val.replace(/[^A-Z0-9 -']/g, '');
-    teamname.value = val;
+    let val = teamname.value;
+    teamname.value = val.toUpperCase();
     validateStep1();
   });
 
@@ -491,7 +508,7 @@ Payment method: ${selected.textContent.trim()}
 Trxid: ${document.getElementById('trxid').value}
 Players Name
 ${playersOutput}
-    `.trim(); // Extra space remove korar jonno trim() use kora hoyeche
+    `.trim();
 
     try {
       const response = await fetch(registrationForm.action, {
