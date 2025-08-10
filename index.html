@@ -468,10 +468,13 @@
 
     uploadBtn.disabled = true;
 
+    const tgUser = document.getElementById('tgUsername').value;
+    const tgLink = `https://t.me/${tgUser.startsWith('@') ? tgUser.substring(1) : tgUser}`;
+
     // Data-gulo ekta JSON object-e store kora hobe
     const formData = {
       teamname: document.getElementById('teamname').value,
-      tgUsername: document.getElementById('tgUsername').value,
+      tgUsername: tgLink, // Telegram username-ke link banano hoyeche
       mobile: document.getElementById('mobile').value,
       paymentMethod: selected.textContent.trim(),
       trxid: document.getElementById('trxid').value,
