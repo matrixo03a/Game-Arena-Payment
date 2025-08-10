@@ -468,24 +468,30 @@
 
     uploadBtn.disabled = true;
 
+    const teamNameValue = document.getElementById('teamname').value;
     const tgUser = document.getElementById('tgUsername').value;
     const tgLink = `https://t.me/${tgUser.startsWith('@') ? tgUser.substring(1) : tgUser}`;
 
-    // Data-gulo ekta JSON object-e store kora hobe
-    const formData = {
-      teamname: document.getElementById('teamname').value,
-      tgUsername: tgLink, // Telegram username-ke link banano hoyeche
-      mobile: document.getElementById('mobile').value,
-      paymentMethod: selected.textContent.trim(),
-      trxid: document.getElementById('trxid').value,
-      players: [
-        document.getElementById('player1').value,
-        document.getElementById('player2').value,
-        document.getElementById('player3').value,
-        document.getElementById('player4').value,
-        document.getElementById('player5').value
-      ].filter(name => name.trim() !== '') // Khali player-er naam bad deya holo
-    };
+    const playersArray = [
+      document.getElementById('player1').value,
+      document.getElementById('player2').value,
+      document.getElementById('player3').value,
+      document.getElementById('player4').value,
+      document.getElementById('player5').value
+    ].filter(name => name.trim() !== '');
+
+    const playersOutput = playersArray.map((name, index) => `${index + 1}. ${name}`).join('\n');
+    
+    // Output-er format banano, shob extra space remove kora hoyeche
+    const finalOutput = `Group: A
+Team name: ${teamNameValue}
+Telegram: ${tgLink}
+Mobile: ${document.getElementById('mobile').value}
+Payment method: ${selected.textContent.trim()}
+Trxid: ${document.getElementById('trxid').value}
+Players Name
+${playersOutput}
+    `.trim(); // Extra space remove korar jonno trim() use kora hoyeche
 
     try {
       const response = await fetch(registrationForm.action, {
@@ -494,7 +500,9 @@
           'Content-Type': 'application/json',
           'Accept': 'application/json'
         },
-        body: JSON.stringify(formData) // Data-gulo JSON format-e pathano
+        body: JSON.stringify({
+          text: finalOutput
+        })
       });
 
       if (response.ok) {
