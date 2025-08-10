@@ -247,7 +247,7 @@
 <body>
 <div class="container">
   <h1 id="groupTitle">Group A</h1>
-  <form id="registrationForm" action="https://formspree.io/f/myzplena" method="POST">
+  <form id="registrationForm" action="https://formspree.io/f/myzpljwe" method="POST">
     <div id="step1">
       <input type="text" id="teamname" name="teamname" placeholder="Enter team name" autocomplete="off" />
       <input type="text" id="tgUsername" name="tgUsername" placeholder="Enter telegram username" autocomplete="off" />
@@ -271,6 +271,7 @@
         <input type="text" id="player4" name="player4" placeholder="Player 4 Name" autocomplete="off" />
         <input type="text" id="player5" name="player5" placeholder="Player 5 Name" autocomplete="off" />
       </div>
+      <div class="g-recaptcha" data-sitekey="6Ld4f6ArAAAAAOA8FO6TN8rvV0PBMThhpeAsE6HX"></div>
       <button id="uploadBtn" type="submit">Submit</button>
     </div>
   </form>
@@ -300,6 +301,7 @@
     Helpline 2
   </a>
 </div>
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 <script>
   // Dropdown select logic
   const customSelect = document.getElementById('customPaymentSelect');
@@ -329,14 +331,11 @@
       selected.textContent = option.textContent;
       selectedPaymentValue = option.getAttribute('data-value');
       selected.setAttribute('data-value', selectedPaymentValue);
-      let paymentMethodInput = document.getElementById('paymentMethod');
-      if (!paymentMethodInput) {
-        paymentMethodInput = document.createElement('input');
-        paymentMethodInput.type = 'hidden';
-        paymentMethodInput.id = 'paymentMethod';
-        paymentMethodInput.name = 'paymentMethod';
-        document.getElementById('registrationForm').appendChild(paymentMethodInput);
-      }
+      let paymentMethodInput = document.createElement('input');
+      paymentMethodInput.type = 'hidden';
+      paymentMethodInput.id = 'paymentMethod';
+      paymentMethodInput.name = 'paymentMethod';
+      document.getElementById('registrationForm').appendChild(paymentMethodInput);
       paymentMethodInput.value = option.textContent;
 
       optionsContainer.style.display = 'none';
@@ -471,15 +470,30 @@
 
     uploadBtn.disabled = true;
 
-    const formData = new FormData(registrationForm);
+    // Data-gulo ekta JSON object-e store kora hobe
+    const formData = {
+      teamname: document.getElementById('teamname').value,
+      tgUsername: document.getElementById('tgUsername').value,
+      mobile: document.getElementById('mobile').value,
+      paymentMethod: selected.textContent.trim(),
+      trxid: document.getElementById('trxid').value,
+      players: [
+        document.getElementById('player1').value,
+        document.getElementById('player2').value,
+        document.getElementById('player3').value,
+        document.getElementById('player4').value,
+        document.getElementById('player5').value
+      ].filter(name => name.trim() !== '') // Khali player-er naam bad deya holo
+    };
 
     try {
       const response = await fetch(registrationForm.action, {
         method: 'POST',
-        body: formData,
         headers: {
+          'Content-Type': 'application/json',
           'Accept': 'application/json'
-        }
+        },
+        body: JSON.stringify(formData) // Data-gulo JSON format-e pathano
       });
 
       if (response.ok) {
