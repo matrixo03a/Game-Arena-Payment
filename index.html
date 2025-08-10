@@ -149,6 +149,18 @@
   .select-items div:hover {
     background: #444;
   }
+  .button-group {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  #backBtn {
+    background: #444;
+    color: white;
+  }
+  #backBtn:hover {
+    background: #666;
+  }
   /* Join Telegram Button */
   #joinTelegramBtn {
     display: flex;
@@ -174,6 +186,53 @@
     width: 24px;
     height: 24px;
     fill: white;
+  }
+  /* Custom pop-up message box */
+  .custom-alert-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+  .custom-alert-box {
+    background: #1e1e1e;
+    color: white;
+    padding: 25px;
+    border-radius: 8px;
+    text-align: center;
+    width: 85%;
+    max-width: 400px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+    animation: fadeIn 0.3s ease-out;
+  }
+  .custom-alert-box h3 {
+    margin-top: 0;
+    font-size: 20px;
+    color: gold;
+  }
+  .custom-alert-box p {
+    font-size: 16px;
+    line-height: 1.4;
+  }
+  .custom-alert-box button {
+    width: auto;
+    padding: 10px 20px;
+    margin-top: 20px;
+    background: gold;
+    color: black;
+    border: none;
+    cursor: pointer;
+    border-radius: 6px;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
   }
   /* Customer Service Button */
   #newServiceBtn {
@@ -279,7 +338,10 @@
         <input type="text" id="player4" name="player4" placeholder="Player 4 Name" autocomplete="off" />
         <input type="text" id="player5" name="player5" placeholder="Player 5 Name" autocomplete="off" />
       </div>
-      <button id="uploadBtn" type="submit">Submit</button>
+      <div class="button-group">
+        <button id="backBtn" type="button">Back</button>
+        <button id="uploadBtn" type="submit">Submit</button>
+      </div>
     </div>
   </form>
   <a id="joinTelegramBtn" href="https://t.me/Gamee_Arena" target="_blank" rel="noopener noreferrer">
@@ -372,9 +434,9 @@
         copyBtn.onclick = () => {
           const textToCopy = paymentNumber.textContent;
           navigator.clipboard.writeText(textToCopy).then(() => {
-            alert(`Copied: ${textToCopy}`);
+            showCustomAlert('Success', `Copied: ${textToCopy}`);
           }).catch(() => {
-            alert('Copy failed. Please copy manually.');
+            showCustomAlert('Error', 'Copy failed. Please copy manually.');
           });
         };
       }
@@ -392,11 +454,14 @@
   const paymentInfo = document.getElementById('paymentInfo');
   const continueBtn = document.getElementById('continueBtn');
   const uploadBtn = document.getElementById('uploadBtn');
-  const step1 = document.getElementById('step1');
-  const step2 = document.getElementById('step2');
-  const groupTitle = document.getElementById('groupTitle');
+  const groupTitleElement = document.getElementById('groupTitle');
+  const backBtn = document.getElementById('backBtn');
+  
+  const initialGroupTitle = groupTitleElement.textContent.trim();
 
   const registrationForm = document.getElementById('registrationForm');
+  const step1 = document.getElementById('step1');
+  const step2 = document.getElementById('step2');
 
   function validateTeamName(name) {
     const upperName = name.toUpperCase();
@@ -408,7 +473,6 @@
     const teamNameValue = teamname.value.trim();
     const isTeamNameValid = validateTeamName(teamNameValue);
     
-    // Invalid message show/hide
     if (teamNameValue !== '' && !isTeamNameValid) {
         teamnameError.style.display = 'block';
     } else {
@@ -431,7 +495,6 @@
     }
   }
 
-  // Input event listener to validate and show/hide error message
   teamname.addEventListener('input', () => {
     let val = teamname.value;
     teamname.value = val.toUpperCase();
@@ -444,12 +507,18 @@
 
   continueBtn.addEventListener('click', () => {
     if (continueBtn.disabled) {
-      alert("Please fill all required fields correctly.");
+      showCustomAlert("Error", "Please fill all required fields correctly.");
       return;
     }
-    groupTitle.textContent = "Players name";
+    groupTitleElement.textContent = "Players name";
     step1.classList.add('hidden');
     step2.classList.remove('hidden');
+  });
+
+  backBtn.addEventListener('click', () => {
+    groupTitleElement.textContent = initialGroupTitle;
+    step2.classList.add('hidden');
+    step1.classList.remove('hidden');
   });
 
   const newServiceBtn = document.getElementById('newServiceBtn');
@@ -480,15 +549,41 @@
     });
   });
 
+  function showCustomAlert(title, message) {
+    const overlay = document.createElement('div');
+    overlay.classList.add('custom-alert-overlay');
+
+    const alertBox = document.createElement('div');
+    alertBox.classList.add('custom-alert-box');
+
+    const alertTitle = document.createElement('h3');
+    alertTitle.textContent = title;
+
+    const alertMessage = document.createElement('p');
+    alertMessage.textContent = message;
+
+    const closeButton = document.createElement('button');
+    closeButton.textContent = 'OK';
+    closeButton.onclick = () => {
+      document.body.removeChild(overlay);
+    };
+
+    alertBox.appendChild(alertTitle);
+    alertBox.appendChild(alertMessage);
+    alertBox.appendChild(closeButton);
+    overlay.appendChild(alertBox);
+    document.body.appendChild(overlay);
+  }
+
   registrationForm.addEventListener('submit', async (e) => {
     e.preventDefault();
 
     uploadBtn.disabled = true;
-
+    
     const teamNameValue = document.getElementById('teamname').value;
     const tgUser = document.getElementById('tgUsername').value;
-    const tgLink = `https://t.me/${tgUser.startsWith('@') ? tgUser.substring(1) : tgUser}`;
-
+    const formattedTgUser = tgUser.startsWith('@') ? tgUser : `@${tgUser}`;
+    
     const playersArray = [
       document.getElementById('player1').value,
       document.getElementById('player2').value,
@@ -499,10 +594,9 @@
 
     const playersOutput = playersArray.map((name, index) => `${index + 1}. ${name}`).join('\n');
     
-    // Output-er format banano, shob extra space remove kora hoyeche
-    const finalOutput = `Group: A
+    const finalOutput = `${initialGroupTitle}
 Team name: ${teamNameValue}
-Telegram: ${tgLink}
+Telegram: ${formattedTgUser}
 Mobile: ${document.getElementById('mobile').value}
 Payment method: ${selected.textContent.trim()}
 Trxid: ${document.getElementById('trxid').value}
@@ -523,11 +617,11 @@ ${playersOutput}
       });
 
       if (response.ok) {
-        alert("Registration successful! Thank you for registering your team.");
+        showCustomAlert("Success", "Registration successful! Thank you for registering your team.");
         registrationForm.reset();
         step2.classList.add('hidden');
         step1.classList.remove('hidden');
-        groupTitle.textContent = "Group A";
+        groupTitleElement.textContent = initialGroupTitle;
         continueBtn.disabled = true;
         continueBtn.classList.remove('enabled');
         paymentInfo.innerHTML = '';
@@ -535,13 +629,13 @@ ${playersOutput}
       } else {
         const data = await response.json();
         if (data.errors) {
-          alert(`Submission failed: ${data.errors.map(err => err.message).join(', ')}`);
+          showCustomAlert("Submission failed", `Oops! ${data.errors.map(err => err.message).join(', ')}`);
         } else {
-          alert("Oops! There was a problem with your submission. Please check your details and try again.");
+          showCustomAlert("Error", "There was a problem with your submission. Please check your details and try again.");
         }
       }
     } catch (error) {
-      alert("An error occurred. Please try again later.");
+      showCustomAlert("Error", "An error occurred. Please try again later.");
     } finally {
       uploadBtn.disabled = false;
     }
